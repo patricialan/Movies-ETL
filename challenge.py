@@ -1,4 +1,3 @@
-# import dependencies
 import json
 import pandas as pd
 import numpy as np
@@ -148,16 +147,13 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
     except:
         print("Kaggle 'video' column may no longer exist so it can't be dropped. Continuing...")
     
-    try:
-        # convert columns to numeric dtype
-        kaggle['budget'] = kaggle['budget'].astype(int, errors='raise')
-        kaggle['id'] = pd.to_numeric(kaggle['id'], errors='raise')
-        kaggle['popularity'] = pd.to_numeric(kaggle['popularity'], errors='raise')
-        # convert release date to datetime
-        kaggle['release_date'] = pd.to_datetime(kaggle['release_date'], errors='raise') 
-    except:
-        print("Problems converting Kaggle 'budget', 'id', or 'popularity' to numerical values, or 'release_date' to datetime. Continuing...")
-    
+    # convert columns to numeric dtype
+    kaggle['budget'] = kaggle['budget'].astype(int, errors='raise')
+    kaggle['id'] = pd.to_numeric(kaggle['id'], errors='raise')
+    kaggle['popularity'] = pd.to_numeric(kaggle['popularity'], errors='raise')
+    # convert release date to datetime
+    kaggle['release_date'] = pd.to_datetime(kaggle['release_date'], errors='raise') 
+
     # --------------wiki-kaggle merge---------------
     
     # merge & rename redundant columns

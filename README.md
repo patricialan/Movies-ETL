@@ -21,3 +21,7 @@ Some assumptions were that...
 4) The majority of 'Box office' and 'Budget' Wiki data would be able to be parsed into certain forms using regular expressions (e.g. $###.# million, $###.# billion, or $###,###,###). These forms limit extraction of data to North American currencies. Thus, it is also assumed that the majority of 'Box office' and 'Budget' Wiki data would continue to be in USD. 
 
 5) Names of important columns would not change in Wiki and Kaggle raw data. The ELT script references names of important columns for data extraction, data type conversions, and column reordering and renaming. Thus, this assumption needs to hold true for the script to successfully run and load files. For Wiki data, important columns are, in general, those with < 90% null rows (since otherwise, columns were discarded). A few examples of names of important columns are 'imdb_link', 'Box office', 'Budget', and 'Running time' in Wiki data and 'id', 'release_date', 'revenue', 'budget', and 'runtime' in Kaggle data. 
+
+6) New Kaggle 'budget', 'id', and 'popularity' data would have data types that could be converted to numeric values. Similarly, it was assumed that new Kaggle 'release_date' data would have a data type that could be converted to datetime. 
+
+7) New Wiki and Kaggle data would both have a column that contained imdb IDs. The ETL script requires this assumption to be true to merge Wiki and Kaggle data into one dataframe. 
