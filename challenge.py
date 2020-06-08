@@ -35,7 +35,6 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
         for movie in wiki:
             if old_name in movie:
                 movie[new_name] = movie.pop(old_name)
-
     try:             
         change_column_name('Adaptation by', 'Writer(s)')
         change_column_name('Country of origin', 'Country')
@@ -57,7 +56,7 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
         change_column_name('Theme music composer', 'Composer(s)')
         change_column_name('Written by', 'Writer(s)')
     except:
-        print('Attempting to change column names but some names are not present. Continuing...')
+        print("Attempting to change column names but some names are not present. Continuing...")
 
     # create dataframe
     wiki_df = pd.DataFrame(wiki)
@@ -150,12 +149,15 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
     except:
         print("Kaggle 'video' column may no longer exist so it can't be dropped. Continuing...")
     
-    # convert columns to numeric dtype
-    kaggle['budget'] = kaggle['budget'].astype(int, errors='raise')
-    kaggle['id'] = pd.to_numeric(kaggle['id'], errors='raise')
-    kaggle['popularity'] = pd.to_numeric(kaggle['popularity'], errors='raise')
-    # convert release date to datetime
-    kaggle['release_date'] = pd.to_datetime(kaggle['release_date'], errors='raise') 
+    try: 
+        # convert columns to numeric dtype
+        kaggle['budget'] = kaggle['budget'].astype(int, errors='raise')
+        kaggle['id'] = pd.to_numeric(kaggle['id'], errors='raise')
+        kaggle['popularity'] = pd.to_numeric(kaggle['popularity'], errors='raise')
+        # convert release date to datetime
+        kaggle['release_date'] = pd.to_datetime(kaggle['release_date'], errors='raise') 
+    except: 
+        print("Kaggle 'budget', 'id', or 'popularity' could not be converted to numeric values, or 'release_date' could not be converted to datetime. Continuing...")
 
     # --------------wiki-kaggle merge---------------
     
