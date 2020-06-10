@@ -1,5 +1,7 @@
 # I added these
 config.py
+Data/movies_metadata.csv
+Data/ratings.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

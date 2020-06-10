@@ -29,34 +29,32 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
     # movies must have director, imdb link, and not be TV series
     wiki = [movie for movie in wiki if ('Director' in movie or 'Directed by' in movie) \
         and 'imdb_link' in movie and 'No. of episodes' not in movie]
-    
+
     # change column names
     def change_column_name(old_name, new_name):         
         for movie in wiki:
             if old_name in movie:
                 movie[new_name] = movie.pop(old_name)
-    try:             
-        change_column_name('Adaptation by', 'Writer(s)')
-        change_column_name('Country of origin', 'Country')
-        change_column_name('Directed by', 'Director')
-        change_column_name('Distributed by', 'Distributor')
-        change_column_name('Edited by', 'Editor(s)')
-        change_column_name('Length', 'Running time')
-        change_column_name('Original release', 'Release date')
-        change_column_name('Music by', 'Composer(s)')
-        change_column_name('Produced by', 'Producer(s)')
-        change_column_name('Producer', 'Producer(s)')
-        change_column_name('Productioncompanies ', 'Production company(s)')
-        change_column_name('Productioncompany ', 'Production company(s)')
-        change_column_name('Released', 'Release Date')
-        change_column_name('Release Date', 'Release date')
-        change_column_name('Screen story by', 'Writer(s)')
-        change_column_name('Screenplay by', 'Writer(s)')
-        change_column_name('Story by', 'Writer(s)')
-        change_column_name('Theme music composer', 'Composer(s)')
-        change_column_name('Written by', 'Writer(s)')
-    except:
-        print("Attempting to change column names but some names are not present. Continuing...")
+             
+    change_column_name('Adaptation by', 'Writer(s)')
+    change_column_name('Country of origin', 'Country')
+    change_column_name('Directed by', 'Director')
+    change_column_name('Distributed by', 'Distributor')
+    change_column_name('Edited by', 'Editor(s)')
+    change_column_name('Length', 'Running time')
+    change_column_name('Original release', 'Release date')
+    change_column_name('Music by', 'Composer(s)')
+    change_column_name('Produced by', 'Producer(s)')
+    change_column_name('Producer', 'Producer(s)')
+    change_column_name('Productioncompanies ', 'Production company(s)')
+    change_column_name('Productioncompany ', 'Production company(s)')
+    change_column_name('Released', 'Release Date')
+    change_column_name('Release Date', 'Release date')
+    change_column_name('Screen story by', 'Writer(s)')
+    change_column_name('Screenplay by', 'Writer(s)')
+    change_column_name('Story by', 'Writer(s)')
+    change_column_name('Theme music composer', 'Composer(s)')
+    change_column_name('Written by', 'Writer(s)')
 
     # create dataframe
     wiki_df = pd.DataFrame(wiki)
@@ -142,22 +140,28 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
     
     # ------------------kaggle----------------------
     
-    try:
-        # keep rows where adult = False (also drops 3 bad data rows) & drop 'adult' column
-        # drop 'video' column because contains 1 unique value "False"
-        kaggle = kaggle[kaggle['adult'] == 'False'].drop(['adult','video'],axis='columns')
-    except:
-        print("Kaggle 'video' column may no longer exist so it can't be dropped. Continuing...")
+    # keep rows where adult = False (also drops 3 bad data rows) & drop 'adult' column
+    # drop 'video' column because contains 1 unique value "False"
+    kaggle = kaggle[kaggle['adult'] == 'False'].drop(['adult','video'],axis='columns')
     
     try: 
         # convert columns to numeric dtype
         kaggle['budget'] = kaggle['budget'].astype(int, errors='raise')
+    except: 
+        print("Kaggle 'budget' could not be converted to integer values. Continuing...")
+    try:
         kaggle['id'] = pd.to_numeric(kaggle['id'], errors='raise')
+    except: 
+        print("Kaggle 'id' could not be converted to numeric values. Continuing...")
+    try:
         kaggle['popularity'] = pd.to_numeric(kaggle['popularity'], errors='raise')
+    except: 
+        print("Kaggle 'popularity' could not be converted to numeric values. Continuing...")
         # convert release date to datetime
+    try:
         kaggle['release_date'] = pd.to_datetime(kaggle['release_date'], errors='raise') 
     except: 
-        print("Kaggle 'budget', 'id', or 'popularity' could not be converted to numeric values, or 'release_date' could not be converted to datetime. Continuing...")
+        print("Kaggle 'release_date' could not be converted to datetime. Continuing...")
 
     # --------------wiki-kaggle merge---------------
     

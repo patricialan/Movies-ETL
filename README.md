@@ -12,6 +12,7 @@ Software: json 2.0.9, numpy 1.18.1, pandas 1.0.3, re 2.2.1, sqlalchemy 1.3.17, j
 To create an automated ETL pipeline, assumptions were made about the datasets.
 
 Some assumptions were that...
+
 1) Kaggle data would continue to have less outliers, be more consistent in content and data types within a column, and have less null values than Wiki data. The implications are that, even though Kaggle and Wiki share some column headers, only Kaggle data would be used to fill the columns 'title', 'release_date', 'original_language', and 'production_companies'; Kaggle data would be the main source for the columns 'runtime', 'budget', and 'revenue' and null values would be replaced with Wiki data; finally, Wiki data would supply the remaining columns (their data being only available from Wiki).
 
 2) The raw ratings.csv file would continue to have the same table structure and the same data type for each column. This assumption must be true for ratings.csv data to be loaded into the PostgreSQL database since the raw file would be loaded into a pre-existing empty table where columns have pre-assigned data types. 
@@ -26,4 +27,6 @@ Some assumptions were that...
 
 7) New Wiki and Kaggle data would both have a column that contains imdb IDs. The ETL script requires this assumption to be true to merge Wiki and Kaggle data into one dataframe. 
 
-8) Raw Wiki data would contain specific dictionary keys in one or more of its dictionaries. Examples are 'Adaptation by', 'Country of origin', 'Directed by', and 'Distributed by'. The script assumes these keys are present and changes (standardizes) these keys (e.g. to 'Writer(s)', 'Country', 'Director', and 'Distributor', respectively,) so that similar values are assigned to the same key (i.e. column header). Consequently, this decreases the number of null rows in columns. 
+8) Raw Wiki data would not contain additional similarly-named keys in its dictionaries. The ETL script identifies known similarly-named keys (e.g. 'Adaptation by', 'Country of origin', 'Directed by', and 'Distributed by') and renames them (e.g. to 'Writer(s)', 'Country', 'Director', and 'Distributor', respectively,) so that similar values are assigned to the same key (i.e. column header). However, the automated script would not detect new similarly-named keys. If these keys are present, they (and their corresponding values) would probably have > 90% null rows and would be dropped from the dataframe. Thus, useful data would be lost. 
+
+9) The user would not want the Kaggles' 'video' column, nor would they want adult movies to be included in the database. The ETL script drops the 'video' column because only 1 out of 6,051 movies had a 'True' value for 'video'. Thus, it was decided that the 'video' column did not provide useful data for enough movies to warrant including it in the database. 
