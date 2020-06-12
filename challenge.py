@@ -211,6 +211,24 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
         'Composer(s)':'composers',
         'Based on':'based_on'}, axis='columns', inplace=True)
     
+    # --------------ratings---------------
+    
+    # create pivot table: index = movieId, columns = rating values, values = counts of users for each rating value
+    rating_counts = ratings.groupby(['movieId','rating'], as_index=False).count() \
+        .rename({'userId':'count'}, axis=1) \
+        .pivot(index='movieId',columns='rating', values='count')
+    
+    # rename column headers
+    rating_counts.columns = ['rating_' + str(col) for col in rating_counts.columns]
+    
+    # --------------wiki-kaggle-ratings merge---------------
+    
+    # merge on kaggle column 'kaggle_id' and ratings index 'movieId'
+    movies_with_ratings_df = pd.merge(movies_df, rating_counts, left_on='kaggle_id', right_index=True, how='left')
+    
+    # fill in no ratings with zero
+    movies_with_ratings_df[rating_counts.columns] = movies_with_ratings_df[rating_counts.columns].fillna(0)
+    
     #----------load files into PostgreSQL database 'movie_data'---------
     
     # create database engine for PostgreSQL to connect
@@ -219,9 +237,9 @@ def movies_ETL(wiki_path, kaggle_path, ratings_path):
     
     try:
         # load movies_df to PostgreSQL
-        movies_df.to_sql(name='movies', con=engine, if_exists='append')
+        movies_with_ratings_df.to_sql(name='movies', con=engine, if_exists='append')
     except:
-        print("Unable to load 'movies_df'. Continuing with loading of 'ratings.csv'.")
+        print("Unable to load 'movies_with_ratings_df'. Continuing with loading of 'ratings.csv'.")
     
     try:
         # load raw ratings data to PostgreSQL     
