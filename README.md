@@ -1,4 +1,4 @@
-# Movies-ETL
+# Movies Database
 
 # Project Overview
 The purpose of the project was to create an automated extraction, transformation, and loading (ETL) pipeline for new movie data. Datasets would be downloaded from multiple sources (Wikipedia (Wiki), Kaggle.com, and MovieLens), undergo automated ETL, and would be loaded into a PostgreSQL database. See <[challenge.py](challenge.py)> for the automated ETL script. 

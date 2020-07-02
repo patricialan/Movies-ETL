@@ -3,6 +3,7 @@ config.py
 Data/movies_metadata.csv
 Data/ratings.csv
 challenge_draft.ipynb
+challenge.ipynb
 movies-ETL.ipynb
 
 # Byte-compiled / optimized / DLL files
